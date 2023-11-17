@@ -4,19 +4,20 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pat's Salmon Cookies Sales Data</title>
+    <link href="https://fonts.googleapis.com/css?family=Righteous&display=swap" rel="stylesheet">
     <style>
         body {
             font-family: 'Arial', sans-serif;
             background-color: #fff;
-            color: #5e5e5e;
+            color: #555;
             margin: 0;
             padding: 0;
         }
-        header, footer {
+        header {
             background-color: black;
             color: white;
-            text-align: center;
             padding: 10px 0;
+            text-align: center;
         }
         nav {
             background-color: salmon;
@@ -42,14 +43,21 @@
             padding: 5px;
             text-align: center;
         }
-        th {
+        #sales-table th {
             background-color: salmon;
         }
-        tfoot {
+        #sales-table tfoot td {
+            background-color: lightgrey;
             font-weight: bold;
         }
-        tfoot td {
-            background-color: lightgrey;
+        footer {
+            background-color: black;
+            color: white;
+            text-align: center;
+            padding: 5px 0;
+            position: absolute;
+            bottom: 0;
+            width: 100%;
         }
     </style>
 </head>
@@ -63,9 +71,18 @@
     </nav>
     <main>
         <table id="sales-table">
-            <!-- The table header -->
-            <!-- The shop data rows -->
-            <!-- The table footer -->
+            <thead>
+                <tr>
+                    <th>Location</th>
+                    
+                </tr>
+            </thead>
+            <tbody>
+               
+            </tbody>
+            <tfoot>
+                
+            </tfoot>
         </table>
     </main>
     <footer>
