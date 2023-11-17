@@ -1,91 +1,116 @@
 // Constructor function for Shop
-function Shop(location, minCustomers, maxCustomers, avgCookiesPerSale) {
+function Shop(location, minCustomers, maxCustomers, avgCookiesPerSale, address, hours, contact) {
   this.location = location;
   this.minCustomers = minCustomers;
   this.maxCustomers = maxCustomers;
   this.avgCookiesPerSale = avgCookiesPerSale;
+  this.address = address;
+  this.hours = hours;
+  this.contact = contact;
   this.salesData = [];
   this.dailyTotal = 0;
   Shop.allShops.push(this);
 }
 
-// Array to hold all shop instances
 Shop.allShops = [];
 Shop.hours = ['6am', '7am', '8am', '9am', '10am', '11am', '12pm', '1pm', '2pm', '3pm', '4pm', '5pm', '6pm', '7pm'];
 
-// Generate random number of customers per hour
 Shop.prototype.generateCustomers = function() {
   return Math.floor(Math.random() * (this.maxCustomers - this.minCustomers + 1) + this.minCustomers);
 };
 
-// Calculate sales data
 Shop.prototype.calculateSalesData = function() {
   for (let hour of Shop.hours) {
-    const cookiesSold = Math.round(this.generateCustomers() * this.avgCookiesPerSale);
+    const customers = this.generateCustomers();
+    const cookiesSold = Math.round(customers * this.avgCookiesPerSale);
     this.salesData.push(cookiesSold);
     this.dailyTotal += cookiesSold;
   }
 };
 
-// Render header row
-function renderHeaderRow() {
-  const salesTable = document.getElementById('sales-table');
-  const thead = document.createElement('thead');
+Shop.prototype.render = function(table) {
   const tr = document.createElement('tr');
-  tr.innerHTML = '<th>Location</th>';
-  Shop.hours.forEach(hour => {
-    tr.innerHTML += `<th>${hour}</th>`;
-  });
-  tr.innerHTML += '<th>Daily Location Total</th>';
-  thead.appendChild(tr);
-  salesTable.appendChild(thead);
-}
+  let td = document.createElement('td');
+  td.textContent = this.location;
+  tr.appendChild(td);
 
-// Render each shop row
-Shop.prototype.render = function() {
-  const salesTable = document.getElementById('sales-table');
-  const tr = document.createElement('tr');
-  tr.innerHTML = `<td>${this.location}</td>`;
   this.salesData.forEach(sales => {
-    tr.innerHTML += `<td>${sales}</td>`;
+    td = document.createElement('td');
+    td.textContent = sales;
+    tr.appendChild(td);
   });
-  tr.innerHTML += `<td>${this.dailyTotal}</td>`;
-  salesTable.appendChild(tr);
+
+  td = document.createElement('td');
+  td.textContent = this.dailyTotal;
+  tr.appendChild(td);
+
+  table.appendChild(tr);
 };
 
-// Render footer row
-function renderFooterRow() {
-  const salesTable = document.getElementById('sales-table');
-  const tfoot = document.createElement('tfoot');
+function renderHeaderRow(table) {
   const tr = document.createElement('tr');
-  let grandTotal = 0;
-  tr.innerHTML = '<td>Totals</td>';
-  Shop.hours.forEach((hour, index) => {
-    let hourlyTotal = Shop.allShops.reduce((sum, shop) => sum + shop.salesData[index], 0);
-    grandTotal += hourlyTotal;
-    tr.innerHTML += `<td>${hourlyTotal}</td>`;
+  let th = document.createElement('th');
+  th.textContent = 'Location';
+  tr.appendChild(th);
+
+  Shop.hours.forEach(hour => {
+    th = document.createElement('th');
+    th.textContent = hour;
+    tr.appendChild(th);
   });
-  tr.innerHTML += `<td>${grandTotal}</td>`;
-  tfoot.appendChild(tr);
-  salesTable.appendChild(tfoot);
+
+  th = document.createElement('th');
+  th.textContent = 'Daily Location Total';
+  tr.appendChild(th);
+
+  table.appendChild(tr);
 }
 
-// Render the table
+function renderFooterRow(table) {
+  const tr = document.createElement('tr');
+  let td = document.createElement('td');
+  td.textContent = 'Totals';
+  tr.appendChild(td);
+
+  let grandTotal = 0;
+  Shop.hours.forEach((_, index) => {
+    let hourlyTotal = 0;
+    Shop.allShops.forEach(shop => {
+      hourlyTotal += shop.salesData[index];
+    });
+    grandTotal += hourlyTotal;
+
+    td = document.createElement('td');
+    td.textContent = hourlyTotal;
+    tr.appendChild(td);
+  });
+
+  td = document.createElement('td');
+  td.textContent = grandTotal;
+  tr.appendChild(td);
+
+  table.appendChild(tr);
+}
+
 function renderTable() {
-  renderHeaderRow();
+  const salesTable = document.getElementById('sales-table');
+  salesTable.innerHTML = '';
+  renderHeaderRow(salesTable);
+
   Shop.allShops.forEach(shop => {
     shop.calculateSalesData();
-    shop.render();
+    shop.render(salesTable);
   });
-  renderFooterRow();
+
+  renderFooterRow(salesTable);
 }
 
 // Instantiate shop objects
-new Shop('Seattle', 23, 65, 6.3);
-new Shop('Tokyo', 3, 24, 1.2);
-new Shop('Dubai', 11, 38, 3.7);
-new Shop('Paris', 20, 38, 2.3);
-new Shop('Lima', 2, 16, 4.6);
+new Shop('Seattle', 23, 65, 6.3, '123 Pike Place', '6am - 8pm', 'seattle@salmoncookies.com');
+new Shop('Tokyo', 3, 24, 1.2, '2 Chome-11-3 Meguro', '6am - 8pm', 'tokyo@salmoncookies.com');
+new Shop('Dubai', 11, 38, 3.7, 'The Dubai Mall', '6am - 8pm', 'dubai@salmoncookies.com');
+new Shop('Paris', 20, 38, 2.3, '101 Rue de Rivoli', '6am - 8pm', 'paris@salmoncookies.com');
+new Shop('Lima', 2, 16, 4.6, 'Av. La Paz', '6am - 8pm', 'lima@salmoncookies.com');
 
-// Call renderTable when the DOM is fully loaded
-window.onload = renderTable;
+// Check if the DOM is fully loaded
+document.addEventListener('DOMContentLoaded', renderTable);
