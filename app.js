@@ -51,6 +51,5 @@ const allShops = [seattleShop, tokyoShop, dubaiShop, parisShop, limaShop];
 // Calculate sales for each shop and render to the DOM
 allShops.forEach(shop => {
   shop.calculateSales();
-  // Assuming you have a div with id 'sales-data' in your sales.html
   shop.renderSales('sales-data');
 });
