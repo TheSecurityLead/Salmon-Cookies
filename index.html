@@ -8,7 +8,7 @@
     <style>
         body {
             font-family: 'Arial', sans-serif;
-            background-color: white;
+            background-color: #fff;
             color: #555;
             margin: 0;
             padding: 0;
@@ -28,30 +28,26 @@
             color: black;
             text-decoration: none;
             padding: 5px 10px;
+            margin: 0 10px;
         }
         nav a:hover {
             background-color: white;
         }
-        h1, h2 {
-            font-family: 'Righteous', cursive;
-        }
         main {
             width: 80%;
             margin: 20px auto;
-            text-align: center;
+        }
+        .location-detail {
+            background-color: #eee;
+            border: 1px solid #ddd;
+            padding: 10px;
+            margin-bottom: 20px;
         }
         footer {
             background-color: black;
             color: white;
             text-align: center;
-            padding: 5px 0;
-            position: absolute;
-            bottom: 0;
-            width: 100%;
-        }
-        .store-info {
-            text-align: left;
-            font-family: 'Georgia', serif;
+            padding: 10px 0;
         }
     </style>
 </head>
@@ -63,39 +59,36 @@
         <a href="index.html">Home</a>
         <a href="sales.html">Sales Data</a>
     </nav>
-    <main>
-        <section>
-            <h2>About Us</h2>
-            <p class="store-info">
-                Pat's Salmon Cookies combines a love for sweets with a passion for sustainable living. Enjoy our coffee-time confection made for humans and salmon alike!
-            </p>
-        </section>
-        <section>
-            <h2>Locations</h2>
-            <div class="store-info">
-                <p>Seattle</p>
-                <p>Tokyo</p>
-                <p>Dubai</p>
-                <p>Paris</p>
-                <p>Lima</p>
-            </div>
-        </section>
-        <section>
-            <h2>Store Hours</h2>
-            <div class="store-info">
-                <p>Open daily: 6am - 7pm</p>
-            </div>
-        </section>
-        <section>
-            <h2>Contact Us</h2>
-            <div class="store-info">
-                <p>Email: contact@patssalmoncookies.com</p>
-                <p>Phone: 123-456-7890</p>
-            </div>
-        </section>
+    <main id="location-details">
+        <!-- Location details will be dynamically inserted by app.js -->
     </main>
     <footer>
         &copy; 2023 Pat's Salmon Cookies
     </footer>
+    <script src="app.js"></script>
+    <script>
+        // Dynamically render location details from the Shop instances
+        Shop.prototype.renderDetails = function() {
+            const main = document.getElementById('location-details');
+
+            const detailDiv = document.createElement('div');
+            detailDiv.className = 'location-detail';
+            detailDiv.innerHTML = `
+                <h2>${this.location}</h2>
+                <p><strong>Address:</strong> ${this.address}</p>
+                <p><strong>Hours Open:</strong> ${this.hours}</p>
+                <p><strong>Contact:</strong> ${this.contact}</p>
+            `;
+
+            main.appendChild(detailDiv);
+        };
+
+        // Call this function on index.html load
+        document.addEventListener('DOMContentLoaded', function() {
+            Shop.allShops.forEach(shop => {
+                shop.renderDetails();
+            });
+        });
+    </script>
 </body>
 </html>
