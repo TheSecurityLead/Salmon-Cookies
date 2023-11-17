@@ -2,49 +2,54 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pat's Salmon Cookies Sales Data</title>
     <style>
         body {
             font-family: 'Arial', sans-serif;
-            background-color: white;
+            background-color: #fff;
             color: #5e5e5e;
             margin: 0;
             padding: 0;
         }
-        header {
+        header, footer {
             background-color: black;
             color: white;
+            text-align: center;
+            padding: 10px 0;
+        }
+        nav {
+            background-color: salmon;
             padding: 10px 0;
             text-align: center;
         }
-        main {
-            width: 80%;
-            margin: 20px auto;
-        }
-        h2 {
-            background-color: salmon;
+        nav a {
             color: black;
+            text-decoration: none;
+            padding: 5px 10px;
+            margin: 0 10px;
+        }
+        nav a:hover {
+            background-color: white;
+        }
+        #sales-table {
+            width: 95%;
+            margin: 20px auto;
+            border-collapse: collapse;
+        }
+        #sales-table th, #sales-table td {
+            border: 1px solid black;
             padding: 5px;
-            border-bottom: 5px solid black;
-        }
-        ul {
-            list-style: none;
-            padding: 0;
-        }
-        li {
-            background-color: #f0f0f0;
-            margin: 5px 0;
-            padding: 5px;
-            border-left: 5px solid salmon;
-        }
-        footer {
-            background-color: black;
-            color: white;
             text-align: center;
-            position: fixed;
-            bottom: 0;
-            width: 100%;
-            padding: 5px 0;
+        }
+        th {
+            background-color: salmon;
+        }
+        tfoot {
+            font-weight: bold;
+        }
+        tfoot td {
+            background-color: lightgrey;
         }
     </style>
 </head>
@@ -52,7 +57,16 @@
     <header>
         <h1>Pat's Salmon Cookies Sales Data</h1>
     </header>
-    <main id="sales-data">
+    <nav>
+        <a href="index.html">Home</a>
+        <a href="sales.html">Sales Data</a>
+    </nav>
+    <main>
+        <table id="sales-table">
+            <!-- The table header -->
+            <!-- The shop data rows -->
+            <!-- The table footer -->
+        </table>
     </main>
     <footer>
         &copy; 2023 Pat's Salmon Cookies
