@@ -1,55 +1,91 @@
-// Helper function to generate random number of customers
-function randomCustomerCount(min, max) {
-  return Math.floor(Math.random() * (max - min + 1)) + min;
-}
-
-// Shop constructor
+// Constructor function for Shop
 function Shop(location, minCustomers, maxCustomers, avgCookiesPerSale) {
   this.location = location;
   this.minCustomers = minCustomers;
   this.maxCustomers = maxCustomers;
   this.avgCookiesPerSale = avgCookiesPerSale;
   this.salesData = [];
+  this.dailyTotal = 0;
+  Shop.allShops.push(this);
 }
 
-// Calculate sales method
-Shop.prototype.calculateSales = function() {
-  for (let hour = 6; hour <= 20; hour++) {
-    const customers = randomCustomerCount(this.minCustomers, this.maxCustomers);
-    const cookies = Math.floor(customers * this.avgCookiesPerSale);
-    this.salesData.push(cookies);
+// Array to hold all shop instances
+Shop.allShops = [];
+Shop.hours = ['6am', '7am', '8am', '9am', '10am', '11am', '12pm', '1pm', '2pm', '3pm', '4pm', '5pm', '6pm', '7pm'];
+
+// Generate random number of customers per hour
+Shop.prototype.generateCustomers = function() {
+  return Math.floor(Math.random() * (this.maxCustomers - this.minCustomers + 1) + this.minCustomers);
+};
+
+// Calculate sales data
+Shop.prototype.calculateSalesData = function() {
+  for (let hour of Shop.hours) {
+    const cookiesSold = Math.round(this.generateCustomers() * this.avgCookiesPerSale);
+    this.salesData.push(cookiesSold);
+    this.dailyTotal += cookiesSold;
   }
 };
 
-// Rendering sales to the DOM
-Shop.prototype.renderSales = function(parentId) {
-  const parentElement = document.getElementById(parentId);
-  const locationElement = document.createElement('h2');
-  locationElement.textContent = this.location;
-  parentElement.appendChild(locationElement);
+// Render header row
+function renderHeaderRow() {
+  const salesTable = document.getElementById('sales-table');
+  const thead = document.createElement('thead');
+  const tr = document.createElement('tr');
+  tr.innerHTML = '<th>Location</th>';
+  Shop.hours.forEach(hour => {
+    tr.innerHTML += `<th>${hour}</th>`;
+  });
+  tr.innerHTML += '<th>Daily Location Total</th>';
+  thead.appendChild(tr);
+  salesTable.appendChild(thead);
+}
 
-  const listElement = document.createElement('ul');
-  for (let i = 0; i < this.salesData.length; i++) {
-    const listItem = document.createElement('li');
-    const hour = i + 6;
-    listItem.textContent = `${hour % 12 || 12}${hour < 12 ? 'am' : 'pm'}: ${this.salesData[i]} cookies`;
-    listElement.appendChild(listItem);
-  }
-  parentElement.appendChild(listElement);
+// Render each shop row
+Shop.prototype.render = function() {
+  const salesTable = document.getElementById('sales-table');
+  const tr = document.createElement('tr');
+  tr.innerHTML = `<td>${this.location}</td>`;
+  this.salesData.forEach(sales => {
+    tr.innerHTML += `<td>${sales}</td>`;
+  });
+  tr.innerHTML += `<td>${this.dailyTotal}</td>`;
+  salesTable.appendChild(tr);
 };
 
-// Creating shop instances
-const seattleShop = new Shop('Seattle', 23, 65, 6.3);
-const tokyoShop = new Shop('Tokyo', 3, 24, 1.2);
-const dubaiShop = new Shop('Dubai', 11, 38, 3.7);
-const parisShop = new Shop('Paris', 20, 38, 2.3);
-const limaShop = new Shop('Lima', 2, 16, 4.6);
+// Render footer row
+function renderFooterRow() {
+  const salesTable = document.getElementById('sales-table');
+  const tfoot = document.createElement('tfoot');
+  const tr = document.createElement('tr');
+  let grandTotal = 0;
+  tr.innerHTML = '<td>Totals</td>';
+  Shop.hours.forEach((hour, index) => {
+    let hourlyTotal = Shop.allShops.reduce((sum, shop) => sum + shop.salesData[index], 0);
+    grandTotal += hourlyTotal;
+    tr.innerHTML += `<td>${hourlyTotal}</td>`;
+  });
+  tr.innerHTML += `<td>${grandTotal}</td>`;
+  tfoot.appendChild(tr);
+  salesTable.appendChild(tfoot);
+}
 
-// Array of all shops
-const allShops = [seattleShop, tokyoShop, dubaiShop, parisShop, limaShop];
+// Render the table
+function renderTable() {
+  renderHeaderRow();
+  Shop.allShops.forEach(shop => {
+    shop.calculateSalesData();
+    shop.render();
+  });
+  renderFooterRow();
+}
 
-// Calculate sales for each shop and render to the DOM
-allShops.forEach(shop => {
-  shop.calculateSales();
-  shop.renderSales('sales-data');
-});
+// Instantiate shop objects
+new Shop('Seattle', 23, 65, 6.3);
+new Shop('Tokyo', 3, 24, 1.2);
+new Shop('Dubai', 11, 38, 3.7);
+new Shop('Paris', 20, 38, 2.3);
+new Shop('Lima', 2, 16, 4.6);
+
+// Call renderTable when the DOM is fully loaded
+window.onload = renderTable;
