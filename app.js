@@ -90,29 +90,42 @@ function renderHeaderRow(table) {
 }
 
 function renderFooterRow(table) {
-  const tr = document.createElement('tr');
-  let td = document.createElement('td');
-  td.textContent = 'Totals';
-  tr.appendChild(td);
+    // Clear existing footer
+    const existingFooter = table.querySelector('tfoot');
+    if (existingFooter) {
+        existingFooter.remove();
+    }
 
-  let grandTotal = 0;
-  Shop.hours.forEach((_, index) => {
-    let hourlyTotal = 0;
-    Shop.allShops.forEach(shop => {
-      hourlyTotal += shop.salesData[index];
-    });
-    grandTotal += hourlyTotal;
+    // Create new footer
+    const tfoot = document.createElement('tfoot');
+    const tr = document.createElement('tr');
+    let td;
 
+    // Add the first cell for the label 'Totals'
     td = document.createElement('td');
-    td.textContent = hourlyTotal;
+    td.textContent = 'Totals';
     tr.appendChild(td);
-  });
 
-  td = document.createElement('td');
-  td.textContent = grandTotal;
-  tr.appendChild(td);
+    let grandTotal = 0;
+    Shop.hours.forEach((_, hourIndex) => {
+        let hourlyTotal = 0;
+        Shop.allShops.forEach(shop => {
+            hourlyTotal += shop.salesData[hourIndex];
+        });
+        grandTotal += hourlyTotal;
 
-  table.appendChild(tr);
+        td = document.createElement('td');
+        td.textContent = hourlyTotal;
+        tr.appendChild(td);
+    });
+
+    // Add the grand total at the end
+    td = document.createElement('td');
+    td.textContent = grandTotal;
+    tr.appendChild(td);
+
+    tfoot.appendChild(tr);
+    table.appendChild(tfoot);
 }
 
 function renderTable() {
