@@ -125,11 +125,42 @@
 
         
         document.addEventListener('DOMContentLoaded', function() {
-          p
-            Shop.allShops.forEach(shop => {
-                shop.renderDetails();
-            });
-        });
+  Shop.allShops.forEach(shop => {
+      shop.renderDetails(); 
+  });
+});
+        document.getElementById('new-shop-form').addEventListener('submit', function(event) {
+    event.preventDefault();
+
+    const newShopData = {
+        location: event.target.location.value,
+        minCustomers: parseInt(event.target.minCustomers.value),
+        maxCustomers: parseInt(event.target.maxCustomers.value),
+        avgCookiesPerSale: parseFloat(event.target.avgCookiesPerSale.value),
+        address: event.target.address.value,
+        hours: event.target.hours.value,
+        contact: event.target.contact.value
+    };
+
+    const newShop = new Shop(
+        newShopData.location,
+        newShopData.minCustomers,
+        newShopData.maxCustomers,
+        newShopData.avgCookiesPerSale,
+        newShopData.address,
+        newShopData.hours,
+        newShopData.contact
+    );
+
+    newShop.calculateSalesData();
+    newShop.render(document.getElementById('sales-table'));
+
+    // Clear the form for the next input
+    event.target.reset();
+
+    // Update the footer to include new shop's data
+    renderFooterRow(document.getElementById('sales-table'));
+});
     </script>
     <script src="app.js"></script>
 </body>
