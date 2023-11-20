@@ -12,6 +12,29 @@ function Shop(location, minCustomers, maxCustomers, avgCookiesPerSale, address, 
   Shop.allShops.push(this);
 }
 
+Shop.prototype.renderDetails = function() {
+  const mainSection = document.getElementById('location-details');
+  const article = document.createElement('article');
+  const h2 = document.createElement('h2');
+  h2.textContent = this.location;
+  article.appendChild(h2);
+
+  const pAddress = document.createElement('p');
+  pAddress.textContent = `Address: ${this.address}`;
+  article.appendChild(pAddress);
+
+  const pHours = document.createElement('p');
+  pHours.textContent = `Hours: ${this.hours}`;
+  article.appendChild(pHours);
+
+  const pContact = document.createElement('p');
+  pContact.textContent = `Contact: ${this.contact}`;
+  article.appendChild(pContact);
+
+  mainSection.appendChild(article);
+};
+
+
 Shop.allShops = [];
 Shop.hours = ['6am', '7am', '8am', '9am', '10am', '11am', '12pm', '1pm', '2pm', '3pm', '4pm', '5pm', '6pm', '7pm'];
 
@@ -67,29 +90,42 @@ function renderHeaderRow(table) {
 }
 
 function renderFooterRow(table) {
-  const tr = document.createElement('tr');
-  let td = document.createElement('td');
-  td.textContent = 'Totals';
-  tr.appendChild(td);
+    // Clear existing footer
+    const existingFooter = table.querySelector('tfoot');
+    if (existingFooter) {
+        existingFooter.remove();
+    }
 
-  let grandTotal = 0;
-  Shop.hours.forEach((_, index) => {
-    let hourlyTotal = 0;
-    Shop.allShops.forEach(shop => {
-      hourlyTotal += shop.salesData[index];
-    });
-    grandTotal += hourlyTotal;
+    // Create new footer
+    const tfoot = document.createElement('tfoot');
+    const tr = document.createElement('tr');
+    let td;
 
+    // Add the first cell for the label 'Totals'
     td = document.createElement('td');
-    td.textContent = hourlyTotal;
+    td.textContent = 'Totals';
     tr.appendChild(td);
-  });
 
-  td = document.createElement('td');
-  td.textContent = grandTotal;
-  tr.appendChild(td);
+    let grandTotal = 0;
+    Shop.hours.forEach((_, hourIndex) => {
+        let hourlyTotal = 0;
+        Shop.allShops.forEach(shop => {
+            hourlyTotal += shop.salesData[hourIndex];
+        });
+        grandTotal += hourlyTotal;
 
-  table.appendChild(tr);
+        td = document.createElement('td');
+        td.textContent = hourlyTotal;
+        tr.appendChild(td);
+    });
+
+    // Add the grand total at the end
+    td = document.createElement('td');
+    td.textContent = grandTotal;
+    tr.appendChild(td);
+
+    tfoot.appendChild(tr);
+    table.appendChild(tfoot);
 }
 
 function renderTable() {
@@ -111,6 +147,9 @@ new Shop('Tokyo', 3, 24, 1.2, '2 Chome-11-3 Meguro', '6am - 8pm', 'tokyo@salmonc
 new Shop('Dubai', 11, 38, 3.7, 'The Dubai Mall', '6am - 8pm', 'dubai@salmoncookies.com');
 new Shop('Paris', 20, 38, 2.3, '101 Rue de Rivoli', '6am - 8pm', 'paris@salmoncookies.com');
 new Shop('Lima', 2, 16, 4.6, 'Av. La Paz', '6am - 8pm', 'lima@salmoncookies.com');
+
+document.getElementById('new-shop-form').addEventListener('submit', function(event) {
+});
 
 // Check if the DOM is fully loaded
 document.addEventListener('DOMContentLoaded', renderTable);
