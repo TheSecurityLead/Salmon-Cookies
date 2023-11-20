@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Process Orders</title>
+    <link href="https://fonts.googleapis.com/css?family=Righteous&display=swap" rel="stylesheet">
+    <style>
+       
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Process Pending Orders</h1>
+    </header>
+    <main>
+        <section id="pending-orders">
+            <h2>Pending Orders</h2>
+           
+            <div class="order" id="order1">
+                <p><strong>Name:</strong> John Doe</p>
+                <p><strong>Product:</strong> Salmon Cookies</p>
+                <p><strong>Quantity:</strong> 3</p>
+                <button onclick="processOrder('order1')">Process Order</button>
+            </div>
+            
+        </section>
+        <section id="filled-orders">
+            <h2>Filled Orders</h2>
+          
+        </section>
+    </main>
+    <footer>
+        &copy; 2023 Pat's Salmon Cookies
+    </footer>
+    <script>
+        // Example JavaScript function to process an order
+        function processOrder(orderId) {
+            const order = document.getElementById(orderId);
+            document.getElementById('filled-orders').appendChild(order);
+            order.querySelector('button').remove(); // Remove the process button
+        }
+    </script>
+</body>
+</html>

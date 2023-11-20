@@ -6,18 +6,32 @@
     <title>Pat's Salmon Cookies</title>
     <link href="https://fonts.googleapis.com/css?family=Righteous&display=swap" rel="stylesheet">
     <style>
-        body {
+        body.light-mode {
             font-family: 'Arial', sans-serif;
-            background-color: white;
+            background-color: #fff;
             color: #555;
-            margin: 0;
-            padding: 0;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        body.dark-mode {
+            background-color: #555;
+            color: #fff;
         }
         header {
-            background-color: black;
+            background-color: #000;
             color: white;
             padding: 10px 0;
             text-align: center;
+            position: relative;
+        }
+        #mode-toggle {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            padding: 5px 10px;
+            background: white;
+            color: black;
+            cursor: pointer;
+            border: none;
         }
         nav {
             background-color: salmon;
@@ -28,74 +42,153 @@
             color: black;
             text-decoration: none;
             padding: 5px 10px;
+            margin: 0 10px;
         }
         nav a:hover {
             background-color: white;
         }
-        h1, h2 {
-            font-family: 'Righteous', cursive;
+        #hero {
+            position: relative;
+            width: 100%;
+            max-height: 300px;
+            overflow: hidden;
+        }
+        #hero img {
+            width: 100%;
+            display: none; /* Hide all images by default */
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+        #hero img.active {
+            display: block; /* Show active image */
         }
         main {
             width: 80%;
             margin: 20px auto;
-            text-align: center;
         }
         footer {
-            background-color: black;
+            background-color: #000;
             color: white;
             text-align: center;
-            padding: 5px 0;
-            position: absolute;
-            bottom: 0;
-            width: 100%;
-        }
-        .store-info {
-            text-align: left;
-            font-family: 'Georgia', serif;
+            padding: 10px 0;
+            margin-top: 20px;
         }
     </style>
 </head>
-<body>
+<body class="light-mode">
     <header>
         <h1>Welcome to Pat's Salmon Cookies!</h1>
+        <button id="mode-toggle">Dark Mode</button>
     </header>
     <nav>
         <a href="index.html">Home</a>
         <a href="sales.html">Sales Data</a>
     </nav>
-    <main>
-        <section>
-            <h2>About Us</h2>
-            <p class="store-info">
-                Pat's Salmon Cookies combines a love for sweets with a passion for sustainable living. Enjoy our coffee-time confection made for humans and salmon alike!
-            </p>
-        </section>
-        <section>
-            <h2>Locations</h2>
-            <div class="store-info">
-                <p>Seattle</p>
-                <p>Tokyo</p>
-                <p>Dubai</p>
-                <p>Paris</p>
-                <p>Lima</p>
-            </div>
-        </section>
-        <section>
-            <h2>Store Hours</h2>
-            <div class="store-info">
-                <p>Open daily: 6am - 7pm</p>
-            </div>
-        </section>
-        <section>
-            <h2>Contact Us</h2>
-            <div class="store-info">
-                <p>Email: contact@patssalmoncookies.com</p>
-                <p>Phone: 123-456-7890</p>
-            </div>
-        </section>
+
+    
+    <section id="hero">
+        <img src="salmon.png" alt="Salmon Image" class="active">
+        <img src="chinook.jpg" alt="Chinook Image">
+        <img src="cutter.jpeg" alt="Cookie Cutter">
+        <img src="family.jpg" alt="Happy Family">
+        <img src="fish.jpg" alt="Fish Decor">
+        <img src="frosted-cookie.jpg" alt="Frosted Cookie">
+        <img src="shirt.jpg" alt="Salmon Shirt">
+    </section>
+
+    <main id="location-details">
+        <form id="new-shop-form">
+    <fieldset>
+        <legend>Add New Cookie Stand</legend>
+        
+        <label for="location">Location Name:</label>
+        <input type="text" id="location" name="location" required>
+
+        <label for="minCust">Minimum Customers per Hour:</label>
+        <input type="number" id="minCust" name="minCustomers" required>
+
+        <label for="maxCust">Maximum Customers per Hour:</label>
+        <input type="number" id="maxCust" name="maxCustomers" required>
+
+        <label for="avgCookies">Average Cookies per Sale:</label>
+        <input type="number" id="avgCookies" name="avgCookiesPerSale" step="0.1" required>
+
+        <label for="address">Address:</label>
+        <input type="text" id="address" name="address" required>
+
+        <label for="hours">Hours:</label>
+        <input type="text" id="hours" name="hours" required>
+
+        <label for="contact">Contact Email:</label>
+        <input type="email" id="contact" name="contact" required>
+
+        <input type="submit" value="Add Cookie Stand">
+    </fieldset>
+</form>
     </main>
+    
     <footer>
         &copy; 2023 Pat's Salmon Cookies
     </footer>
+
+    <script>
+       
+        let currentImageIndex = 0;
+        const images = document.querySelectorAll('#hero img');
+        setInterval(() => {
+            images[currentImageIndex].classList.remove('active');
+            currentImageIndex = (currentImageIndex + 1) % images.length;
+            images[currentImageIndex].classList.add('active');
+        }, 3000); 
+
+      
+        const toggleButton = document.getElementById('mode-toggle');
+        toggleButton.addEventListener('click', function() {
+            document.body.classList.toggle('dark-mode');
+            document.body.classList.toggle('light-mode');
+            toggleButton.textContent = document.body.classList.contains('dark-mode') ? 'Light Mode' : 'Dark Mode';
+        });
+
+        
+        document.addEventListener('DOMContentLoaded', function() {
+  Shop.allShops.forEach(shop => {
+      shop.renderDetails(); 
+  });
+});
+        document.getElementById('new-shop-form').addEventListener('submit', function(event) {
+    event.preventDefault();
+
+    const newShopData = {
+        location: event.target.location.value,
+        minCustomers: parseInt(event.target.minCustomers.value),
+        maxCustomers: parseInt(event.target.maxCustomers.value),
+        avgCookiesPerSale: parseFloat(event.target.avgCookiesPerSale.value),
+        address: event.target.address.value,
+        hours: event.target.hours.value,
+        contact: event.target.contact.value
+    };
+
+    const newShop = new Shop(
+        newShopData.location,
+        newShopData.minCustomers,
+        newShopData.maxCustomers,
+        newShopData.avgCookiesPerSale,
+        newShopData.address,
+        newShopData.hours,
+        newShopData.contact
+    );
+
+    newShop.calculateSalesData();
+    newShop.render(document.getElementById('sales-table'));
+
+    // Clear the form for the next input
+    event.target.reset();
+
+    // Update the footer to include new shop's data
+    renderFooterRow(document.getElementById('sales-table'));
+});
+    </script>
+    <script src="app.js"></script>
 </body>
 </html>

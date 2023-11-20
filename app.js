@@ -1,55 +1,116 @@
-// Helper function to generate random number of customers
-function randomCustomerCount(min, max) {
-  return Math.floor(Math.random() * (max - min + 1)) + min;
-}
-
-// Shop constructor
-function Shop(location, minCustomers, maxCustomers, avgCookiesPerSale) {
+// Constructor function for Shop
+function Shop(location, minCustomers, maxCustomers, avgCookiesPerSale, address, hours, contact) {
   this.location = location;
   this.minCustomers = minCustomers;
   this.maxCustomers = maxCustomers;
   this.avgCookiesPerSale = avgCookiesPerSale;
+  this.address = address;
+  this.hours = hours;
+  this.contact = contact;
   this.salesData = [];
+  this.dailyTotal = 0;
+  Shop.allShops.push(this);
 }
 
-// Calculate sales method
-Shop.prototype.calculateSales = function() {
-  for (let hour = 6; hour <= 20; hour++) {
-    const customers = randomCustomerCount(this.minCustomers, this.maxCustomers);
-    const cookies = Math.floor(customers * this.avgCookiesPerSale);
-    this.salesData.push(cookies);
+Shop.allShops = [];
+Shop.hours = ['6am', '7am', '8am', '9am', '10am', '11am', '12pm', '1pm', '2pm', '3pm', '4pm', '5pm', '6pm', '7pm'];
+
+Shop.prototype.generateCustomers = function() {
+  return Math.floor(Math.random() * (this.maxCustomers - this.minCustomers + 1) + this.minCustomers);
+};
+
+Shop.prototype.calculateSalesData = function() {
+  for (let hour of Shop.hours) {
+    const customers = this.generateCustomers();
+    const cookiesSold = Math.round(customers * this.avgCookiesPerSale);
+    this.salesData.push(cookiesSold);
+    this.dailyTotal += cookiesSold;
   }
 };
 
-// Rendering sales to the DOM
-Shop.prototype.renderSales = function(parentId) {
-  const parentElement = document.getElementById(parentId);
-  const locationElement = document.createElement('h2');
-  locationElement.textContent = this.location;
-  parentElement.appendChild(locationElement);
+Shop.prototype.render = function(table) {
+  const tr = document.createElement('tr');
+  let td = document.createElement('td');
+  td.textContent = this.location;
+  tr.appendChild(td);
 
-  const listElement = document.createElement('ul');
-  for (let i = 0; i < this.salesData.length; i++) {
-    const listItem = document.createElement('li');
-    const hour = i + 6;
-    listItem.textContent = `${hour % 12 || 12}${hour < 12 ? 'am' : 'pm'}: ${this.salesData[i]} cookies`;
-    listElement.appendChild(listItem);
-  }
-  parentElement.appendChild(listElement);
+  this.salesData.forEach(sales => {
+    td = document.createElement('td');
+    td.textContent = sales;
+    tr.appendChild(td);
+  });
+
+  td = document.createElement('td');
+  td.textContent = this.dailyTotal;
+  tr.appendChild(td);
+
+  table.appendChild(tr);
 };
 
-// Creating shop instances
-const seattleShop = new Shop('Seattle', 23, 65, 6.3);
-const tokyoShop = new Shop('Tokyo', 3, 24, 1.2);
-const dubaiShop = new Shop('Dubai', 11, 38, 3.7);
-const parisShop = new Shop('Paris', 20, 38, 2.3);
-const limaShop = new Shop('Lima', 2, 16, 4.6);
+function renderHeaderRow(table) {
+  const tr = document.createElement('tr');
+  let th = document.createElement('th');
+  th.textContent = 'Location';
+  tr.appendChild(th);
 
-// Array of all shops
-const allShops = [seattleShop, tokyoShop, dubaiShop, parisShop, limaShop];
+  Shop.hours.forEach(hour => {
+    th = document.createElement('th');
+    th.textContent = hour;
+    tr.appendChild(th);
+  });
 
-// Calculate sales for each shop and render to the DOM
-allShops.forEach(shop => {
-  shop.calculateSales();
-  shop.renderSales('sales-data');
-});
+  th = document.createElement('th');
+  th.textContent = 'Daily Location Total';
+  tr.appendChild(th);
+
+  table.appendChild(tr);
+}
+
+function renderFooterRow(table) {
+  const tr = document.createElement('tr');
+  let td = document.createElement('td');
+  td.textContent = 'Totals';
+  tr.appendChild(td);
+
+  let grandTotal = 0;
+  Shop.hours.forEach((_, index) => {
+    let hourlyTotal = 0;
+    Shop.allShops.forEach(shop => {
+      hourlyTotal += shop.salesData[index];
+    });
+    grandTotal += hourlyTotal;
+
+    td = document.createElement('td');
+    td.textContent = hourlyTotal;
+    tr.appendChild(td);
+  });
+
+  td = document.createElement('td');
+  td.textContent = grandTotal;
+  tr.appendChild(td);
+
+  table.appendChild(tr);
+}
+
+function renderTable() {
+  const salesTable = document.getElementById('sales-table');
+  salesTable.innerHTML = '';
+  renderHeaderRow(salesTable);
+
+  Shop.allShops.forEach(shop => {
+    shop.calculateSalesData();
+    shop.render(salesTable);
+  });
+
+  renderFooterRow(salesTable);
+}
+
+// Instantiate shop objects
+new Shop('Seattle', 23, 65, 6.3, '123 Pike Place', '6am - 8pm', 'seattle@salmoncookies.com');
+new Shop('Tokyo', 3, 24, 1.2, '2 Chome-11-3 Meguro', '6am - 8pm', 'tokyo@salmoncookies.com');
+new Shop('Dubai', 11, 38, 3.7, 'The Dubai Mall', '6am - 8pm', 'dubai@salmoncookies.com');
+new Shop('Paris', 20, 38, 2.3, '101 Rue de Rivoli', '6am - 8pm', 'paris@salmoncookies.com');
+new Shop('Lima', 2, 16, 4.6, 'Av. La Paz', '6am - 8pm', 'lima@salmoncookies.com');
+
+// Check if the DOM is fully loaded
+document.addEventListener('DOMContentLoaded', renderTable);
